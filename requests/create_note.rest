@@ -1,0 +1,9 @@
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+
+{
+	"title": "Programming is fun but difficult, ugh.",
+	"author": "Ngoc Truong",
+	"url": "http://www.google.de",
+	"likes": 3
+}

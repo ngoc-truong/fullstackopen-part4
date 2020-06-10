@@ -1,0 +1,9 @@
+PUT http://localhost:3001/api/blogs/5edc161d6a4197246524a4a1
+Content-Type: application/json
+
+{
+	"title": "Mamasita, das ist upgedated",
+	"author": "Ngoc Truong",
+	"url": "http://www.google.de",
+	"likes": 3
+}

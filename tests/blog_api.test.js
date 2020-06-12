@@ -6,16 +6,20 @@ const helper = require("./test_helper");
 const api = supertest(app);
 const Blog = require("../models/blog");
 const User = require("../models/user");
-const blog = require("../models/blog");
 
 beforeEach(async () => {
+	// Populate DB with blogs
 	await Blog.deleteMany({});
-
 	const blogObjects = helper.initialBlogs
 		.map((blog) => new Blog(blog));
-	
 	const promiseArray = blogObjects.map((blog) => blog.save());
 	await Promise.all(promiseArray);
+
+	// Populate DB with one user
+	await User.deleteMany({});
+	const passwordHash = await bcrypt.hash("sekret", 10);
+	const user = new User({ username: "root", passwordHash });
+	await user.save();
 });
 
 describe("retrieving blog posts", () => {
@@ -33,6 +37,21 @@ describe("retrieving blog posts", () => {
 });
 
 describe("addition of a new blog post", () => {
+	let token = null;
+
+	// Login user and save token
+	beforeEach(async () => {
+		await api
+			.post("/api/login")
+			.send({
+				username: "root",
+				password: "sekret",
+			})
+			.end((error, response) => {
+				token = response.body.token;
+			});
+	});
+
 	test("a valid blog post can be added", async () => {
 		const newBlog = {
 			title: "Nur der SVW",
@@ -43,6 +62,7 @@ describe("addition of a new blog post", () => {
 	
 		await api
 			.post("/api/blogs")
+			.set("Authorization", `Bearer ${token}`) 
 			.send(newBlog)
 			.expect(201)
 			.expect("Content-Type", /application\/json/);
@@ -107,12 +127,15 @@ describe("addition of a new blog post", () => {
 });
 
 describe("deletion of a blog post", () => {
+
+
 	test("succeeds with status code 204 if id is valid", async () => {
 		const blogsAtStart = await helper.blogsInDb();
 		const blogToDelete = blogsAtStart[0];
 
-		await api 
+		await api
 			.delete(`/api/blogs/${blogToDelete.id}`)
+			//.set("Authorization", `Bearer ${token}`) 
 			.expect(204);
 		
 		const blogsAtEnd = await helper.blogsInDb();
@@ -149,15 +172,6 @@ describe("updating a blog post", () => {
 });
 
 describe("when there is initially one user in db", () => {
-	beforeEach(async () => {
-		await User.deleteMany({});
-
-		const passwordHash = await bcrypt.hash("sekret", 10);
-		const user = new User({ username: "root", passwordHash });
-
-		await user.save();
-	});
-
 	test("creation succeeds with a fresh username", async () => {
 		const usersAtStart = await helper.usersInDb();
 

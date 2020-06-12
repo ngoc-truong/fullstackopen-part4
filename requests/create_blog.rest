@@ -1,8 +1,9 @@
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im5vZ28iLCJpZCI6IjVlZTI4NTI0YTkzODhmNDZhYjUyZGEzZiIsImlhdCI6MTU5MTk1ODI1Nn0.cjzzvoqNvj_hEBprQUYN1rbKfNE44125DgZW_Bh_Z0k
 
 {
-	"title": "Programming is fun but difficult, ugh.",
+	"title": "This is a logged in post, does it work?",
 	"author": "Ngoc Truong",
 	"url": "http://www.google.de",
 	"likes": 3,

@@ -93,13 +93,9 @@ describe("addition of a new blog post", () => {
 			.set({ "Authorization": `bearer ${token}`})
 			.expect(201)
 			.expect("Content-Type", /application\/json/);
-		/*
-		const response = await api.get("/api/blogs");
-		expect(response.body[response.body.length - 1].likes).toBe(0);
-		*/
+
 		const blogsAtEnd = await helper.blogsInDb();
 		expect(blogsAtEnd[blogsAtEnd.length - 1].likes).toBe(0);
-
 	});
 	
 	test("blog without title is not added", async () => {
@@ -132,6 +128,19 @@ describe("addition of a new blog post", () => {
 	
 		const blogsAtEnd = await helper.blogsInDb();
 		expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length);
+	});
+
+	test("blog without token is not added", async () => {
+		const newBlog = {
+			title: "Muhhhh",
+			url: "www.muh.de",
+		};
+
+		await api
+			.post("/api/blogs")
+			.send(newBlog)
+			.expect(401)
+			.expect("Content-Type", /application\/json/);
 	});
 });
 

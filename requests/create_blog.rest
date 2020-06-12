@@ -5,5 +5,6 @@ Content-Type: application/json
 	"title": "Programming is fun but difficult, ugh.",
 	"author": "Ngoc Truong",
 	"url": "http://www.google.de",
-	"likes": 3
+	"likes": 3,
+	"userId": "5ee28524a9388f46ab52da3f"
 }
